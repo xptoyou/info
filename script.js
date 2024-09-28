@@ -4,7 +4,7 @@ const sendBtn = document.getElementById('send-btn');
 
 const responses = {
     'hello': "Hi there!",
-    'my account': "I'm just a bot, but thanks for asking!",
+    'code': "https://xptoyou.github.io/seif.github.io/",
     'what is your name': "xp",
 };
 
