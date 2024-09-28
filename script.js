@@ -4,9 +4,8 @@ const sendBtn = document.getElementById('send-btn');
 
 const responses = {
     'hello': "Hi there!",
-    'how are you?': "I'm just a bot, but thanks for asking!",
-    'what is your name?': "I'm a simple chatbot!",
-    'bye': "Goodbye! Have a great day!"
+    'my account': "I'm just a bot, but thanks for asking!",
+    'what is your name': "xp",
 };
 
 function addMessage(content, className) {
