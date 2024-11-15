@@ -25,9 +25,11 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
 <script>
-    const socket = io();
+    const socket = io();  // Connect to WebSocket server
+    console.log('WebSocket connected');
 
     socket.on('message', function(msg) {
+        console.log('Message received:', msg);  // Log received messages
         const messageDiv = document.createElement('div');
         messageDiv.textContent = msg;
         document.getElementById('messages').appendChild(messageDiv);
@@ -35,10 +37,12 @@
 
     function sendMessage() {
         const message = document.getElementById('message').value;
-        socket.send(message);
-        document.getElementById('message').value = '';
+        console.log('Sending message:', message);  // Log the message being sent
+        socket.send(message);  // Send message via WebSocket
+        document.getElementById('message').value = '';  // Clear input field
     }
 </script>
 
 </body>
 </html>
+
