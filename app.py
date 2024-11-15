@@ -2,13 +2,12 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_socketio import SocketIO, send
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-# Initialize Flask app and extensions
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 socketio = SocketIO(app)
 login_manager = LoginManager(app)
 
-# Simulate a database of users
+# Simulated user database
 users = {'admin': {'password': 'adminpass', 'role': 'admin'},
          'guest': {'password': 'guestpass', 'role': 'guest'}}
 
@@ -17,7 +16,6 @@ class User(UserMixin):
         self.id = username
         self.role = role
 
-# User loader for Flask-Login
 @login_manager.user_loader
 def load_user(username):
     user_info = users.get(username)
@@ -27,7 +25,7 @@ def load_user(username):
 
 @app.route('/')
 def index():
-    return render_template('login.html')  # Login page
+    return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -51,13 +49,16 @@ def logout():
 def chat():
     return render_template('chat.html')
 
+# WebSocket event handler
 @socketio.on('message')
 def handle_message(msg):
+    print(f"Received message: {msg}")  # Log the message to see if it's received
     if current_user.role == 'admin':
-        send(msg, broadcast=True)  # Admin can broadcast messages
+        send(msg, broadcast=True)  # Broadcast to all connected clients
     else:
         send('You are not allowed to send messages.', room=request.sid)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+
 
