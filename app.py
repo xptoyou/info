@@ -49,16 +49,19 @@ def logout():
 def chat():
     return render_template('chat.html')
 
-# WebSocket event handler
+# WebSocket event handler for messages
 @socketio.on('message')
 def handle_message(msg):
-    print(f"Received message: {msg}")  # Log the message to see if it's received
+    # Only allow 'admin' to send messages
     if current_user.role == 'admin':
-        send(msg, broadcast=True)  # Broadcast to all connected clients
+        print(f"Admin received message: {msg}")
+        send(msg, broadcast=True)  # Admin can broadcast the message to everyone
     else:
-        send('You are not allowed to send messages.', room=request.sid)
+        print(f"Non-admin {current_user.id} tried to send a message: {msg}")
+        send('You do not have permission to send messages.', room=request.sid)  # Send a restriction message
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+
 
 
