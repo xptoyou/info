@@ -1,44 +1,63 @@
-from flask import Flask, request, jsonify, send_file
-from xp_interpreter import XPInterpreter
-import os
+from flask import Flask, render_template, redirect, url_for, request
+from flask_socketio import SocketIO, send
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+# Initialize Flask app and extensions
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+socketio = SocketIO(app)
+login_manager = LoginManager(app)
 
-@app.route('/run', methods=['POST'])
-def run_xp():
-    data = request.get_json()
-    code = data.get('code', '')
+# Simulate a database of users
+users = {'admin': {'password': 'adminpass', 'role': 'admin'},
+         'guest': {'password': 'guestpass', 'role': 'guest'}}
 
-    interpreter = XPInterpreter()
-    output = []
+class User(UserMixin):
+    def __init__(self, username, role):
+        self.id = username
+        self.role = role
 
-    # Override print to capture interpreter output
-    def capture_print(*args):
-        output.append(' '.join(map(str, args)))
+# User loader for Flask-Login
+@login_manager.user_loader
+def load_user(username):
+    user_info = users.get(username)
+    if user_info:
+        return User(username, user_info['role'])
+    return None
 
-    interpreter.print = capture_print  # Replace print in XP interpreter
-    interpreter.execute(code)
+@app.route('/')
+def index():
+    return render_template('login.html')  # Login page
 
-    return jsonify({'output': '\n'.join(output)})
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    user_info = users.get(username)
 
-@app.route('/download', methods=['GET'])
-def download_xp_file():
-    # Create a sample XP file
-    file_content = """var x = 10
-var y = 20
-if x + y > 25 {
-    print("Sum is greater than 25")
-} else {
-    print("Sum is 25 or less")
-}"""
-    file_path = "xptoyou.xp"
-    
-    # Write the file content
-    with open(file_path, "w") as file:
-        file.write(file_content)
+    if user_info and user_info['password'] == password:
+        user = User(username, user_info['role'])
+        login_user(user)
+        return redirect(url_for('chat'))
+    return 'Invalid credentials!'
 
-    # Serve the file as a download
-    return send_file(file_path, as_attachment=True)
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route('/chat')
+@login_required
+def chat():
+    return render_template('chat.html')
+
+@socketio.on('message')
+def handle_message(msg):
+    if current_user.role == 'admin':
+        send(msg, broadcast=True)  # Admin can broadcast messages
+    else:
+        send('You are not allowed to send messages.', room=request.sid)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
+
