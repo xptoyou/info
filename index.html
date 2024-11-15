@@ -3,46 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Chat</title>
+    <title>[Business Name]</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; }
-        input { width: 80%; padding: 5px; }
-        button { padding: 5px 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 40px;
+            text-align: center;
+        }
+        .about, .services, .contact {
+            background-color: #f4f4f4;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+        }
+        .services ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .services li {
+            padding: 10px 0;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
-
-<h2>Real-time Chat</h2>
-
-{% if current_user.role == 'admin' %}
-    <div id="messages"></div>
-    <input id="message" type="text" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
-{% else %}
-    <p>You do not have permission to chat here.</p>
-{% endif %}
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
-<script>
-    const socket = io();  // Connect to WebSocket server
-    console.log('WebSocket connected');
-
-    socket.on('message', function(msg) {
-        console.log('Message received:', msg);  // Log received messages
-        const messageDiv = document.createElement('div');
-        messageDiv.textContent = msg;
-        document.getElementById('messages').appendChild(messageDiv);
-    });
-
-    function sendMessage() {
-        const message = document.getElementById('message').value;
-        console.log('Sending message:', message);  // Log the message being sent
-        socket.send(message);  // Send message via WebSocket
-        document.getElementById('message').value = '';  // Clear input field
-    }
-</script>
-
+    <header>
+        <h1>[Business Name]</h1>
+        <p>Your tagline or motto here</p>
+    </header>
+    <nav>
+        <a href="#about">About Us</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section id="about">
+        <div class="about">
+            <h2>About Us</h2>
+            <p>Welcome to [Business Name]! We are passionate about delivering quality and excellence in everything we do.</p>
+        </div>
+    </section>
+    <section id="services">
+        <div class="services">
+            <h2>Our Services</h2>
+            <ul>
+                <li>Service 1: Description</li>
+                <li>Service 2: Description</li>
+                <li>Service 3: Description</li>
+            </ul>
+        </div>
+    </section>
+    <section id="contact">
+        <div class="contact">
+            <h2>Contact Us</h2>
+            <p>Email: <a href="mailto:info@yourbusiness.com">info@yourbusiness.com</a></p>
+            <p>Phone: (123) 456-7890</p>
+            <p>Address: 123 Business St, City, State</p>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; [Year] [Business Name]. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>
+
 
